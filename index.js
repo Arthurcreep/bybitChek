@@ -102,6 +102,6 @@ async function getBalance() {
 }
 getBalance()
 bot.command('wallet', async (ctx) => {
-  await ctx.reply(strBuy + '~' + 'USDT')
+  await ctx.reply(strBuy + '' + 'USDT')
 })
 bot.start()
