@@ -17,8 +17,7 @@ const bot  = new Bot(process.env.API_BOT)
 
 bot.api.setMyCommands([
   {command:'start', description:'Start the bot'},
-  {command:'example', description:'Chekend the bot'},
-  {command:'position', description:'chekend the wallet'},
+  {command:'wallet', description:'Chekend the bot'},
 ])
 let strBuy = ''
 let strBtc = ''
@@ -66,7 +65,43 @@ client
     console.log(response.time)
   })
 }, 5000)
+// Работа Бота Данные BTC при старте
+async function getBtcDate() {
+  client
+  .getServerTime()
+  .then((response) => {
+    client
+    .getKline({
+      category: 'spot',
+      symbol: 'BTCUSDT',
+      interval: '1',
+      start: response.time,
+      end: response.time,
+  })
+  .then((response) => {
+    strBtc = response.result.list[0][4] 
+  })})
+}
+getBtcDate()
 bot.command('start', async (ctx) => {
-  await ctx.reply(`Работаем`)
+  await ctx.reply(strBtc + ' ' + 'USDT')
+})
+// Работа Бота: Данные по балансу
+async function getBalance() {
+  client
+    .getWalletBalance({
+        accountType: 'UNIFIED',
+        coin: 'USDT',
+    })
+    .then((response) => {
+      strBuy = Math.floor(response.result.list[0].coin[0].walletBalance)
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
+getBalance()
+bot.command('wallet', async (ctx) => {
+  await ctx.reply(strBuy + ' ' + 'USDT')
 })
 bot.start()
